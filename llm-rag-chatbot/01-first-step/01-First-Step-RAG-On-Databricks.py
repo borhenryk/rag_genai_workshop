@@ -213,7 +213,7 @@ def format_context(docs):
     return "".join(chunk_contents)
 
 #Let's try our retriever chain:
-relevant_docs = (vector_search_as_retriever | RunnableLambda(format_context)| StrOutputParser()).invoke('What is RAG?')
+relevant_docs = (vector_search_as_retriever | RunnableLambda(format_context)| StrOutputParser()).invoke('How to build RAG on Databricks?')
 
 display_txt_as_html(relevant_docs)
 
@@ -255,7 +255,7 @@ model = ChatDatabricks(
 )
 
 #Let's try our prompt:
-answer = (prompt | model | StrOutputParser()).invoke({'question':'What is the capital of France?', 'context': ''})
+answer = (prompt | model | StrOutputParser()).invoke({'question':'How to start a Databricks cluster?', 'context': ''})
 display_txt_as_html(answer)
 
 # COMMAND ----------

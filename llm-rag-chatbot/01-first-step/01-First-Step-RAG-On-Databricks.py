@@ -36,7 +36,7 @@ your_name = "_<your_name>"
 
 # COMMAND ----------
 
-vs_index_fullnamef = f"{catalog}.{db}.databricks_documentation_vs_index_{your_name}"
+vs_index_fullname = f"{catalog}.{db}.databricks_documentation_vs_index_{your_name}"
 MODEL_NAME = f"basic_rag_demo_{your_name}"
 endpoint_serving_name = f"rag_endpoint_{your_name}"
 

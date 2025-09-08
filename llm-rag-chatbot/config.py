@@ -19,7 +19,7 @@ catalog = "lakehouse_dev"
 #email = spark.sql('select current_user() as user').collect()[0]['user']
 #username = email.split('@')[0].replace('.', '_')
 #dbName = db = f"dbdemos_rag_{username}"
-dbName = db = "ds_digital_analytics_databricks_labs_lhdev"
+dbName = db = "ds_consumption_ml_journey_lhdev"
 
 # COMMAND ----------
 

@@ -22,8 +22,8 @@
 
 # COMMAND ----------
 
-# MAGIC %pip install -U --quiet databricks-sdk==0.49.0 "databricks-langchain>=0.4.0" databricks-agents mlflow[databricks] databricks-vectorsearch==0.55 langchain==0.3.25 langchain_core==0.3.59 bs4==0.0.2 markdownify==0.14.1 pydantic==2.10.1
-# MAGIC dbutils.library.restartPython()
+#%pip install -U --quiet databricks-sdk==0.49.0 "databricks-langchain>=0.4.0" databricks-agents mlflow[databricks] databricks-vectorsearch==0.55 langchain==0.3.25 langchain_core==0.3.59 bs4==0.0.2 markdownify==0.14.1 pydantic==2.10.1
+#dbutils.library.restartPython()
 
 # COMMAND ----------
 
@@ -106,7 +106,7 @@ if not index_exists(vsc, VECTOR_SEARCH_ENDPOINT_NAME, vs_index_fullname):
     pipeline_type="TRIGGERED",
     primary_key="id",
     embedding_source_column='content', #The column containing our text
-    embedding_model_endpoint_name='da-bedrock-titan-text-embeddings-v2' #The embedding endpoint used to create the embeddings
+    embedding_model_endpoint_name='ds-consumption-ml-journey-embedding-endpoint' #The embedding endpoint used to create the embeddings
   )
   #Let's wait for the index to be ready and all our embeddings to be created and indexed
   wait_for_index_to_be_ready(vsc, VECTOR_SEARCH_ENDPOINT_NAME, vs_index_fullname)
@@ -164,10 +164,13 @@ docs
 # COMMAND ----------
 
 # For this first basic demo, we'll keep the configuration as a minimum. In real app, you can make all your RAG as a param (such as your prompt template to easily test different prompts!)
+
+#vs_index_fullname = f"{catalog}.{db}.databricks_documentation_vs_index" (Use if you want to use this default index)
+
 chain_config = {
-    "llm_model_serving_endpoint_name": "da-bedrock-claude-3-5-sonnet-v2",  # the foundation model we want to use
+    "llm_model_serving_endpoint_name": "ds-consumption-ml-journey-fm-endpoint",  # the foundation model we want to use
     "vector_search_endpoint_name": VECTOR_SEARCH_ENDPOINT_NAME,  # the endoint we want to use for vector search
-    "vector_search_index": f"{catalog}.{db}.databricks_documentation_vs_index",
+    "vector_search_index": vs_index_fullname,
     "llm_prompt_template": """You are an assistant that answers questions. Use the following pieces of retrieved context to answer the question. Some pieces of context may be irrelevant, in which case you should not use them to form the answer.\n\nContext: {context}""",
 }
 
@@ -226,7 +229,7 @@ display_txt_as_html(relevant_docs)
 # MAGIC
 # MAGIC <img src="https://github.com/databricks-demos/dbdemos-resources/blob/main/images/product/chatbot-rag/rag-basic-chain-3.png?raw=true" style="float: right" width="500px">
 # MAGIC
-# MAGIC Our chatbot will be using Meta's Llama open source model. However, it could be utilized with DBRX (_pictured_), or any other LLMs served on Databricks.  
+# MAGIC Our chatbot will be using Claude model. However, it could be utilized with DBRX (_pictured_), or any other LLMs served on Databricks.  
 # MAGIC
 # MAGIC Other types of models that could be utilized include:
 # MAGIC
@@ -342,8 +345,11 @@ with mlflow.start_run(run_name="basic_rag_bot"):
           resources=[
             DatabricksVectorSearchIndex(index_name=model_config.get("vector_search_index")),
             DatabricksServingEndpoint(endpoint_name=model_config.get("llm_model_serving_endpoint_name")),
-            DatabricksServingEndpoint(endpoint_name="da-bedrock-titan-text-embeddings-v2")
-          ]
+            DatabricksServingEndpoint(endpoint_name="ds-consumption-ml-journey-embedding-endpoint")
+          ],
+          pip_requirements=[
+            "databricks-vectorsearch==0.55", "databricks-agents", "databricks-langchain>=0.4.0", "langchain==0.3.25", "langchain_core==0.3.59","bs4==0.0.2", "markdownify==0.14.1", "pydantic==2.10.1"
+        ]
       )
 
 MODEL_NAME_FQN = f"{catalog}.{db}.{MODEL_NAME}"
